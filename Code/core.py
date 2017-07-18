@@ -28,6 +28,8 @@ def lineShift(fileName, spreadSpectrum):
 	ori = []
 	bantuShift = -4
 	merger = PyPDF2.PdfFileMerger()
+
+	print Fore.CYAN + '[+]'+ Style.RESET_ALL +' Counting space and shifting line'
 	
 	for fileNameInput in fileNameInputs:
 		im = Image.open(fileNameInput)
@@ -42,13 +44,6 @@ def lineShift(fileName, spreadSpectrum):
 		masukHitam = 0
 		saatnya = 0
 
-		print Fore.CYAN + '[+]'+ Style.RESET_ALL + ' Counting space on original file'
-		# widgets = [Fore.CYAN + '[+]'+ Style.RESET_ALL +' Progress: ', Percentage(), ' ', Bar(marker=u'\u2588',left='[',right=']'),
-	           # ' ', ETA(), ' '] #see docs for other options
-
-		# pbar = ProgressBar(widgets=widgets, maxval=lebar*tinggi)
-		# x = 0
-		# pbar.start()
 	    #hitung jumlah spasinya
 		for i in range(tinggi):
 			if hitungPutih == lebar:
@@ -65,8 +60,6 @@ def lineShift(fileName, spreadSpectrum):
 			hitungPutih = 0
 
 			for j in range(lebar):
-				# x += 1
-				# pbar.update(x)
 				if im.getpixel((j, i)) == PUTIH:
 					hitungPutih += 1
 				else:
@@ -80,7 +73,6 @@ def lineShift(fileName, spreadSpectrum):
 					else:
 						patokan = 1
 						masukHitam = 1
-		# pbar.finish()
 
 		#geser
 		lineSpacing = 0
@@ -92,10 +84,6 @@ def lineShift(fileName, spreadSpectrum):
 		tanda = ''
 		x = 0
 
-		print Fore.CYAN + '[+]'+ Style.RESET_ALL +' Shifting line'
-
-		# pbar = ProgressBar(widgets=widgets, maxval=lebar*tinggi)
-		# pbar.start()
 
 		for i in range(tinggi):
 			if bantuSpasi == lebar:
@@ -118,8 +106,6 @@ def lineShift(fileName, spreadSpectrum):
 			bantuSpasi = 0
  			
 			for j in range(lebar):
-				# x += 1
-				# pbar.update(x)
 				if im.getpixel((j, i)) == PUTIH:
 					bantuSpasi += 1
 				else:
@@ -134,16 +120,14 @@ def lineShift(fileName, spreadSpectrum):
 
 		bantuShift -= 4
 		
-		# pbar.finish()
-		print Fore.CYAN + '[+]'+ Style.RESET_ALL +' Save watermarked file'
 		file_save = fileNameInput
 		am.save(file_save, 'png')
-		print Fore.CYAN + '[+]'+ Style.RESET_ALL +' Converting back to PDF'
 		file_save_pdf = file_save.split('.')[0] + '.pdf'
 		png2pdf(file_save, file_save_pdf)
 		merger.append(open(file_save_pdf,'rb'))
 
-
+	print Fore.CYAN + '[+]'+ Style.RESET_ALL +' Done'
+	print Fore.CYAN + '[+]'+ Style.RESET_ALL +' Save watermarked file'
 	fileName = raw_input(Fore.CYAN + '[+]'+ Style.RESET_ALL +' Save location : ')
 	with open(fileName, 'wb') as fout:
 		merger.write(fout)
@@ -165,11 +149,6 @@ def watermarkDetect(watermarkFile, seed, fileInfo):
 		imWat = Image.open(watermarkFile)
 
 		lebar, tinggi = imWat.size
-		widgets = [Fore.CYAN + '[+]'+ Style.RESET_ALL+ ' Progress: ', Percentage(), ' ', Bar(marker=u'\u2588',left='[',right=']'),
-	           ' ', ETA(), ' '] #see docs for other options
-
-		# pbar = ProgressBar(widgets=widgets, maxval=lebar*tinggi)
-		# pbar.start()
 						
 		#wat
 		patokan = 0
@@ -179,7 +158,7 @@ def watermarkDetect(watermarkFile, seed, fileInfo):
 		saatnya = 0
 
 		x = 0
-		# pbar.start()
+
 	    #hitung jumlah spasinya
 		for i in range(tinggi):
 			if hitungPutih == lebar:
@@ -197,7 +176,7 @@ def watermarkDetect(watermarkFile, seed, fileInfo):
 
 			for j in range(lebar):
 				x += 1
-				# pbar.update(x)
+				
 				if imWat.getpixel((j, i)) == PUTIH:
 					hitungPutih += 1
 				else:
@@ -211,7 +190,6 @@ def watermarkDetect(watermarkFile, seed, fileInfo):
 					else:
 						patokan = 1
 						masukHitam = 1
-		# pbar.finish()
 		
 	ss = ''
 	count = 0
@@ -234,3 +212,19 @@ def watermarkDetect(watermarkFile, seed, fileInfo):
 		
 	print Fore.CYAN + '[+]'+ Style.RESET_ALL + ' Done'
 	print Fore.CYAN + '[+]' +  Style.RESET_ALL + ' Watermark :', watermark
+
+def countPSNR(ori, wat):
+	MSE = 0
+
+	fileOri = sorted(glob.glob(pdf2png(ori) + '*.png'))
+	fileWat = sorted(glob.glob(pdf2png(wat) + '*.png'))
+
+	print fileOri
+	print fileWat
+
+
+
+
+
+
+	# PSNR = 20 * log(MAX / math.sqrt(MSE))
