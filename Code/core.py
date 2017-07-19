@@ -244,7 +244,7 @@ def countPSNR(ori, wat):
 
 				mseR += pow((ri - ra), 2)
 				mseG += pow((gi - ga), 2)
-				mseG += pow((bi - ba), 2)
+				mseB += pow((bi - ba), 2)
 
 	mseR = mseR * 1.0 / (lebar * tinggi)
 	mseG = mseG * 1.0 / (lebar * tinggi)
