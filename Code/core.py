@@ -23,7 +23,7 @@ PUTIH = (255, 255, 255)
 SEQUENCE = generateSequenceShift(4)
 REV_SEQUENCE = dict([(v, k) for k, v in SEQUENCE.iteritems()])
 
-def lineShift(fileName, spreadSpectrum):
+def lineShift(fileName, spreadSpectrum, pin):
 	fileNameInputs = sorted(glob.glob(fileName + '*.png'))
 	ori = []
 	bantuShift = -4
@@ -135,10 +135,11 @@ def lineShift(fileName, spreadSpectrum):
 	print Fore.CYAN + '[+]'+ Style.RESET_ALL +' Done'
 	print Fore.CYAN + '[+]'+ Style.RESET_ALL +' Save info file '
 	fileInfoLocation = raw_input(Fore.CYAN + '[+]'+ Style.RESET_ALL +' Save location : ')
-	open(fileInfoLocation, 'w').write(' '.join(str(x) for x in ori))
+	open(fileInfoLocation, 'a').write(pin + '\n')
+	open(fileInfoLocation, 'a').write(' '.join(str(x) for x in ori))
 	print Fore.CYAN + '[+]'+ Style.RESET_ALL +' Done'
 
-def watermarkDetect(watermarkFile, seed, fileInfo):
+def watermarkDetect(watermarkFile, fileInfo):
 	watermark = ''
 	watermarkFiles = sorted(glob.glob(watermarkFile + '*.png'))
 	wat = []
@@ -193,7 +194,9 @@ def watermarkDetect(watermarkFile, seed, fileInfo):
 		
 	ss = ''
 	count = 0
-	ori = open(fileInfo, 'r').read().split()
+	oris = open(fileInfo, 'r').read().split('\n')
+	seed = oris[0]
+	ori = oris[1].split()
 
 	for i in range(len(wat)):
 		temp = int(ori[i]) - wat[i]
@@ -214,17 +217,41 @@ def watermarkDetect(watermarkFile, seed, fileInfo):
 	print Fore.CYAN + '[+]' +  Style.RESET_ALL + ' Watermark :', watermark
 
 def countPSNR(ori, wat):
-	MSE = 0
+	#perhitungan PSNR didasarkan pada masing2 channel R, G, B
 
 	fileOri = sorted(glob.glob(pdf2png(ori) + '*.png'))
 	fileWat = sorted(glob.glob(pdf2png(wat) + '*.png'))
 
-	print fileOri
-	print fileWat
+	maxR = maxG = maxB = 0
+	mseR = mseG = mseB = 0
 
+	for i in range(len(fileOri)):
+		im = Image.open(fileOri[i])
+		am = Image.open(fileWat[i])
+		lebar, tinggi = im.size
 
+		for j in range(tinggi):
+			for k in range(lebar):
+				ri,gi,bi = im.getpixel((k, j))
+				if ri >= maxR:
+					maxR = ri
+				if gi >= maxG:
+					maxG = gi
+				if bi >= maxB:
+					maxB = bi
 
+				ra,ga,ba = am.getpixel((k, j))
 
+				mseR += pow((ri - ra), 2)
+				mseG += pow((gi - ga), 2)
+				mseG += pow((bi - ba), 2)
 
+	mseR = mseR * 1.0 / (lebar * tinggi)
+	mseG = mseG * 1.0 / (lebar * tinggi)
+	mseB = mseB * 1.0 / (lebar * tinggi)
 
-	# PSNR = 20 * log(MAX / math.sqrt(MSE))
+	psnrR = 20 * math.log(maxR / math.sqrt(mseR))
+	psnrG = 20 * math.log(maxG / math.sqrt(mseG))
+	psnrB = 20 * math.log(maxB / math.sqrt(mseB))
+
+	print psnrR, psnrG, psnrB
