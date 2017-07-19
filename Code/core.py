@@ -254,4 +254,6 @@ def countPSNR(ori, wat):
 	psnrG = 20 * math.log(maxG / math.sqrt(mseG))
 	psnrB = 20 * math.log(maxB / math.sqrt(mseB))
 
-	print psnrR, psnrG, psnrB
+	print Fore.CYAN + '[+]' + Style.RESET_ALL + ' PSNR on channel Red', psnrR
+	print Fore.CYAN + '[+]' + Style.RESET_ALL + ' PSNR on channel Green', psnrG
+	print Fore.CYAN + '[+]' + Style.RESET_ALL + ' PSNR on channel Blue', psnrB
