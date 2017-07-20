@@ -8,10 +8,9 @@
 #-*- coding:utf-8 -*-
 
 from colorama import Fore, Back, Style
-from progressbar import *
 from util import *
-import ImageDraw
-import Image
+from PIL import ImageDraw
+from PIL import Image
 import PyPDF2
 import glob
 import sys
@@ -23,7 +22,7 @@ PUTIH = (255, 255, 255)
 SEQUENCE = generateSequenceShift(4)
 REV_SEQUENCE = dict([(v, k) for k, v in SEQUENCE.iteritems()])
 
-def lineShift(fileName, spreadSpectrum, pin):
+def lineShift(fileName, spreadSpectrum):
 	fileNameInputs = sorted(glob.glob(fileName + '*.png'))
 	ori = []
 	bantuShift = -4
@@ -114,7 +113,7 @@ def lineShift(fileName, spreadSpectrum, pin):
 					if patokan == 0 and bantu_stop == 0: #kalo bukan patokan, digeser, tapi kalo patokan jangan digeser (diem aja di tempat)
 						tanda = spreadSpectrum[bantuShift : bantuShift + 4]
 						geser = SEQUENCE[tanda]
-						draw.point((j, i + geser), im.getpixel((j, i))) #geser
+						draw.point((j, i + geser), im.getpixel((j, i))) #geser posisi baris ganjil
 					else:
 						draw.point((j, i), im.getpixel((j, i)))
 
@@ -135,11 +134,10 @@ def lineShift(fileName, spreadSpectrum, pin):
 	print Fore.CYAN + '[+]'+ Style.RESET_ALL +' Done'
 	print Fore.CYAN + '[+]'+ Style.RESET_ALL +' Save info file '
 	fileInfoLocation = raw_input(Fore.CYAN + '[+]'+ Style.RESET_ALL +' Save location : ')
-	open(fileInfoLocation, 'a').write(pin + '\n')
-	open(fileInfoLocation, 'a').write(' '.join(str(x) for x in ori))
+	open(fileInfoLocation, 'w').write(' '.join(str(x) for x in ori))
 	print Fore.CYAN + '[+]'+ Style.RESET_ALL +' Done'
 
-def watermarkDetect(watermarkFile, fileInfo):
+def watermarkDetect(watermarkFile, fileInfo, seed):
 	watermark = ''
 	watermarkFiles = sorted(glob.glob(watermarkFile + '*.png'))
 	wat = []
@@ -194,9 +192,7 @@ def watermarkDetect(watermarkFile, fileInfo):
 		
 	ss = ''
 	count = 0
-	oris = open(fileInfo, 'r').read().split('\n')
-	seed = oris[0]
-	ori = oris[1].split()
+	ori = open(fileInfo, 'r').read().split()
 
 	for i in range(len(wat)):
 		temp = int(ori[i]) - wat[i]
@@ -204,7 +200,8 @@ def watermarkDetect(watermarkFile, fileInfo):
 			ss += REV_SEQUENCE[temp]
 			count += 1
 
-	pin = generatePin(seed, count * 4)
+	seedBiner = ''.join('{0:08b}'.format(ord(x), 'b') for x in seed)
+	pin = generatePin(seedBiner, count * 4)
 	keyBiner = generateSpreadSpectrum(pin, ss)
 
 	x = 0
