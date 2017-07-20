@@ -31,7 +31,6 @@ class FileError(Error):
 
 #==============================Utility=====================================
 def pdf2png(fileNameInput):
-	# fileNameOutput = raw_input(Fore.CYAN + '[+]' + Style.RESET_ALL + ' Location to save the PNG : ')
 	print Fore.CYAN + '[+]'+ Style.RESET_ALL+' Convert PDF to PNG'
 	fileNameOutput = fileNameInput.split('.')[0]
 	cmd = 'gs -dSAFER -dBATCH -dNOPAUSE -sDEVICE=png16m -r500 -sOutputFile=' + fileNameOutput + '%d.png '+ fileNameInput #png 500 dpi
@@ -142,6 +141,3 @@ def checkFile(file):
 	except FileError, err:
 		print err.msg
 		return False
-
-def countPSNR(ori, wat):
-	pass
