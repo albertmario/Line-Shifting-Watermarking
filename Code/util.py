@@ -19,11 +19,11 @@ class Error(Exception):
 class SeedError(Error):
 	'''Exception for pin error'''
 	def __init__(self):
-		self.msg = 'pin must be 6 characters long consist of 1 and 0'
+		self.msg = 'pin must be 1 character only'
 class KeyError(Error):
 	'''Exception for key error'''
 	def __init__(self):
-		self.msg = 'the key is too long'
+		self.msg = 'the secret key is too long'
 class FileError(Error):
 	'''Exception for file error'''
 	def __init__(self):
@@ -42,7 +42,7 @@ def png2pdf(fileNameInput, fileNameOutput):
 	os.system(cmd)
 
 def generatePin(seed, lenKey):
-	#pin ini menggunakan LFSR 6
+	#pin ini menggunakan LSFR 8 bit
 	#akan diputar sesuai dengan panjang key
 	
 	listSeed = [int(i) for i in seed]
@@ -118,15 +118,10 @@ def checkLine(fileNameInput, key): # cek apakah jumlah baris > panjang key
 		print err.msg
 		return False
 
-def checkKeyBody(seed): #cek apakah seed hanya mengandung 0 dan 1
+def checkSeedBody(seed): #cek apakah seed hanya mengandung 0 dan 1
 	try:
-		listSeed = ['0', '1']
 
-		for i in seed:
-			if i not in listSeed:
-				raise SeedError
-
-		if len(seed) != 6:
+		if len(seed) > 1:
 			raise SeedError
 
 		return True
