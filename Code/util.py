@@ -19,7 +19,7 @@ class Error(Exception):
 class SeedError(Error):
 	'''Exception for pin error'''
 	def __init__(self):
-		self.msg = 'pin must be 1 character only'
+		self.msg = 'seed of pin must be 1 character only'
 class KeyError(Error):
 	'''Exception for key error'''
 	def __init__(self):
@@ -28,6 +28,10 @@ class FileError(Error):
 	'''Exception for file error'''
 	def __init__(self):
 		self.msg = 'no such file'
+class SumError(Error):
+	'''Exception for Sum error'''
+	def __init__(self):
+		self.msg = 'md5sum is different'
 
 #==============================Utility=====================================
 def pdf2png(fileNameInput):
