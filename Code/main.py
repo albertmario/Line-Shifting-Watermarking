@@ -33,10 +33,8 @@ def start():
 			fileNameInput = opts.shi[0]
 			key = opts.shi[1]
 			seed = opts.shi[2]
-			print seed
 			keyBiner = ''.join('{0:08b}'.format(ord(x), 'b') for x in key)
 			seedBiner = ''.join('{0:08b}'.format(ord(x), 'b') for x in seed)
-			print seedBiner
 			pin = generatePin(seedBiner, len(keyBiner))
 			spreadSpectrum = generateSpreadSpectrum(keyBiner, pin)
 			fileName = pdf2png(fileNameInput)
