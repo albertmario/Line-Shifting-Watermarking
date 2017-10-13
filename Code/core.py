@@ -14,6 +14,7 @@ from PIL import Image
 import PyPDF2
 import glob
 import sys
+import math
 global REV_SEQUENCE	
 global SEQUENCE
 global PUTIH
@@ -146,7 +147,6 @@ def watermarkDetect(watermarkFile, fileInfo, seed):
 
 	for watermarkFile in watermarkFiles:
 		imWat = Image.open(watermarkFile)
-
 		lebar, tinggi = imWat.size
 						
 		#wat
@@ -197,7 +197,11 @@ def watermarkDetect(watermarkFile, fileInfo, seed):
 	for i in range(len(wat)):
 		temp = int(ori[i]) - wat[i]
 		if temp:
-			ss += REV_SEQUENCE[temp]
+			try:
+				ss += REV_SEQUENCE[temp]
+			except:
+				pass
+				
 			count += 1
 
 	seedBiner = ''.join('{0:08b}'.format(ord(x), 'b') for x in seed)
